@@ -6,9 +6,9 @@ import {
   RefreshControl,
   ActivityIndicator,
   FlatList,
-  SafeAreaView,
   StatusBar,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { observer } from 'mobx-react-lite';
 import { PostCard } from '../components/PostCard';
 import { TabBar } from '../components/TabBar';
@@ -46,7 +46,7 @@ export const FeedScreen = observer(() => {
 
   const renderItem = useCallback(
     ({ item }: { item: Post }) => <PostCard post={item} onLike={toggleLike} />,
-    [toggleLike],
+    [] // mutation function is stable, no need to add to dependencies
   );
 
   const keyExtractor = useCallback((item: Post) => item.id, []);

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { BlurView } from 'expo-blur';
 import { colors, spacing, borderRadius, typography, shadow } from '../tokens/design';
 
 interface LockedPostProps {
@@ -9,11 +10,11 @@ interface LockedPostProps {
 export function LockedPost({ onSubscribe }: LockedPostProps) {
   return (
     <View style={styles.container}>
-      <View style={styles.blurOverlay}>
+      <BlurView intensity={20} style={styles.blurOverlay} tint="light">
         <Text style={styles.previewText} numberOfLines={3}>
           Этот пост доступен только подписчикам. Поддержите автора, чтобы читать эксклюзивный контент...
         </Text>
-      </View>
+      </BlurView>
       <View style={styles.lockBadge}>
         <Text style={styles.lockIcon}>🔒</Text>
         <Text style={styles.lockText}>Только для подписчиков</Text>

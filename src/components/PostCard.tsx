@@ -14,7 +14,7 @@ interface PostCardProps {
   onLike: (postId: string) => void;
 }
 
-export const PostCard = observer(({ post, onLike }: PostCardProps) => {
+export const PostCard = React.memo(observer(({ post, onLike }: PostCardProps) => {
   const { isLiked, likesCount } = feedStore.getPostLikeState(
     post.id,
     post.isLiked,
@@ -65,7 +65,7 @@ export const PostCard = observer(({ post, onLike }: PostCardProps) => {
       </View>
     </View>
   );
-});
+}));
 
 const styles = StyleSheet.create({
   card: {

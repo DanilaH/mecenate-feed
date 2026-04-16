@@ -53,7 +53,17 @@ EXPO_PUBLIC_USER_UUID=550e8400-e29b-41d4-a716-446655440000
 npm install
 ```
 
-### 4. Запуск
+Установлены дополнительные библиотеки (`expo-secure-store`, `react-native-safe-area-context`, `expo-blur`, `eslint`, `prettier`).
+
+### 4. Проверка кода (Linter)
+
+Для проверки стиля кода запущен проект ESLint и Prettier:
+```bash
+npm run lint
+npm run format
+```
+
+### 5. Запуск
 
 ```bash
 npx expo start

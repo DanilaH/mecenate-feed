@@ -2,7 +2,8 @@ import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-q
 import { observer } from 'mobx-react-lite';
 import { getFeed, toggleLike } from '../api/posts';
 import { feedStore } from '../stores/FeedStore';
-import type { Tier } from '../types/api';
+import type { Tier, PostsResponse } from '../types/api';
+import type { InfiniteData } from '@tanstack/react-query';
 
 export const FEED_QUERY_KEY = (tier: Tier) => ['feed', tier] as const;
 
@@ -30,17 +31,18 @@ export function useToggleLike() {
     mutationFn: toggleLike,
     onMutate: async (postId: string) => {
       // Find current state across all cached feed pages
-      const queries = queryClient.getQueriesData<any>({ queryKey: ['feed'] });
+      const queries = queryClient.getQueriesData<InfiniteData<PostsResponse>>({ queryKey: ['feed'] });
       let originalIsLiked = false;
       let originalCount = 0;
 
       for (const [, data] of queries) {
         if (!data?.pages) continue;
         for (const page of data.pages) {
-          const post = page.data?.posts?.find((p: any) => p.id === postId);
+          const post = page.data?.posts?.find((p) => p.id === postId);
           if (post) {
-            originalIsLiked = feedStore.getPostLikeState(postId, post.isLiked, post.likesCount).isLiked;
-            originalCount = feedStore.getPostLikeState(postId, post.isLiked, post.likesCount).likesCount;
+            const state = feedStore.getPostLikeState(postId, post.isLiked, post.likesCount);
+            originalIsLiked = state.isLiked;
+            originalCount = state.likesCount;
           }
         }
       }

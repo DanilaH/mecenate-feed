@@ -32,6 +32,9 @@ export const LikeButton = observer(({ isLiked, likesCount, onPress }: LikeButton
       activeOpacity={0.7}
       style={styles.container}
       hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+      accessibilityRole="button"
+      accessibilityLabel={isLiked ? `Убрать лайк. Текущее количество: ${likesCount}` : `Лайкнуть. Текущее количество: ${likesCount}`}
+      accessibilityState={{ selected: isLiked }}
     >
       <Animated.Text
         style={[styles.heart, isLiked && styles.heartLiked, { transform: [{ scale }] }]}
