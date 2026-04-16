@@ -1,0 +1,18 @@
+import axios from 'axios';
+
+const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'https://k8s.mectest.ru/test-app';
+const USER_UUID =
+  process.env.EXPO_PUBLIC_USER_UUID ?? '550e8400-e29b-41d4-a716-446655440000';
+
+export const apiClient = axios.create({
+  baseURL: API_URL,
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+apiClient.interceptors.request.use((config) => {
+  config.headers.Authorization = `Bearer ${USER_UUID}`;
+  return config;
+});
