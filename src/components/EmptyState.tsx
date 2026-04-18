@@ -1,6 +1,8 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { colors, spacing, typography, borderRadius, shadow } from '../tokens/design';
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { Image } from "expo-image";
+import { PrimaryButton } from "./PrimaryButton";
+import { colors, typography } from "../tokens/design";
 
 interface EmptyStateProps {
   onHome?: () => void;
@@ -9,13 +11,13 @@ interface EmptyStateProps {
 export function EmptyState({ onHome }: EmptyStateProps) {
   return (
     <View style={styles.container}>
-      <Text style={styles.emoji}>🦑</Text>
+      <Image
+        source={require("../../assets/sad-axolotl.svg")}
+        style={styles.image}
+        contentFit="contain"
+      />
       <Text style={styles.title}>По вашему запросу ничего не найдено</Text>
-      {onHome && (
-        <TouchableOpacity style={styles.button} onPress={onHome} activeOpacity={0.85}>
-          <Text style={styles.buttonText}>На главную</Text>
-        </TouchableOpacity>
-      )}
+      {onHome && <PrimaryButton title="На главную" onPress={onHome} />}
     </View>
   );
 }
@@ -23,34 +25,23 @@ export function EmptyState({ onHome }: EmptyStateProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: spacing.xxxl,
-    paddingVertical: spacing.xxxl * 2,
-    gap: spacing.md,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 34,
+    paddingBottom: 96,
+    gap: 14,
   },
-  emoji: {
-    fontSize: 72,
-    marginBottom: spacing.md,
+  image: {
+    width: 92,
+    height: 92,
+    marginBottom: 2,
   },
   title: {
-    fontSize: typography.lg,
-    fontWeight: typography.semiBold,
+    fontSize: 18,
+    fontWeight: typography.bold,
+    fontFamily: typography.family.bold,
     color: colors.text,
-    textAlign: 'center',
-    lineHeight: 24,
-  },
-  button: {
-    marginTop: spacing.lg,
-    backgroundColor: colors.primary,
-    paddingHorizontal: spacing.xxxl * 1.5,
-    paddingVertical: spacing.md,
-    borderRadius: borderRadius.full,
-    ...shadow.button,
-  },
-  buttonText: {
-    color: colors.textOnPrimary,
-    fontSize: typography.md,
-    fontWeight: typography.semiBold,
+    textAlign: "center",
+    lineHeight: 20,
   },
 });

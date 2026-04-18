@@ -18,7 +18,7 @@ export interface Post {
   likesCount: number;
   commentsCount: number;
   isLiked: boolean;
-  tier: 'free' | 'paid';
+  tier: "free" | "paid";
   createdAt: string;
 }
 
@@ -28,6 +28,8 @@ export interface Comment {
   author: Author;
   text: string;
   createdAt: string;
+  likesCount?: number;
+  isLiked?: boolean;
 }
 
 export interface PostsResponse {
@@ -61,6 +63,13 @@ export interface CommentsResponse {
   };
 }
 
+export interface CommentCreatedResponse {
+  ok: boolean;
+  data: {
+    comment: Comment;
+  };
+}
+
 export interface ErrorResponse {
   ok: false;
   error: {
@@ -69,4 +78,4 @@ export interface ErrorResponse {
   };
 }
 
-export type Tier = 'all' | 'free' | 'paid';
+export type Tier = "all" | "free" | "paid";

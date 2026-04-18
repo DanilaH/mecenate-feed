@@ -1,107 +1,113 @@
 # Mecenate Feed
 
-Экран ленты публикаций для платформы Mecenate — сервиса поддержки авторов.
+React Native + Expo приложение для тестового задания Mecenate. Реализованы экран ленты публикаций и экран детальной публикации с комментариями, лайками и real-time обновлениями.
+
+## Demo
+
+<p align="center">
+  <img src="assets/demo.gif" alt="Mecenate Feed demo" width="360" />
+</p>
+
+## Возможности
+
+- Лента постов с автором, аватаром, обложкой, превью, лайками и комментариями.
+- Курсорная пагинация и pull-to-refresh.
+- Фильтр ленты: Все / Бесплатные / Платные.
+- Платные посты `tier: "paid"` с blurred-заглушкой и кнопкой доната.
+- Error state API: сообщение `Не удалось загрузить публикации` и кнопка повтора.
+- Детальный экран поста с полным текстом, автором, обложкой и комментариями.
+- Lazy load комментариев.
+- Переключение сортировки комментариев: сначала залайканные / сначала новые.
+- Поле ввода и отправка нового комментария.
+- Лайк поста с optimistic update, Reanimated-анимацией и haptic feedback.
+- WebSocket-подписка на новые лайки и комментарии.
+- Дизайн-токены для цветов, типографики, радиусов и отступов.
 
 ## Стек
 
-- **React Native + Expo** (managed workflow)
-- **TypeScript**
-- **React Query** (`@tanstack/react-query`) — серверный стейт, курсорная пагинация
-- **MobX** (`mobx` + `mobx-react-lite`) — UI стейт, optimistic updates лайков
-- **FlashList** (`@shopify/flash-list`) — высокопроизводительный список
-- **expo-image** — оптимизированная загрузка изображений
+- TypeScript
+- React Native + Expo
+- React Navigation
+- TanStack React Query
+- MobX
+- Reanimated
+- Expo Haptics
+- Expo Image
+- Expo Blur
+- Expo SecureStore
+- Zod
 
-## Функциональность
-
-- ✅ Лента постов с аватаром, именем автора, обложкой, превью, счётчиками
-- ✅ Платные посты (`tier: "paid"`) — заглушка вместо текста
-- ✅ Курсорная пагинация (подгрузка при скролле вниз)
-- ✅ Pull-to-refresh
-- ✅ Фильтрация по типу: Все / Бесплатные / Платные
-- ✅ Кнопка лайка с optimistic update и анимацией
-- ✅ Скелетон при первой загрузке
-- ✅ Экран ошибки «Не удалось загрузить публикации» с кнопкой «Повторить»
-- ✅ Экран пустой ленты
-
-## Быстрый старт
-
-### 1. Клонирование
+## Быстрый Старт
 
 ```bash
-git clone <repo-url>
-cd mecenate-feed
-```
-
-### 2. Переменные окружения
-
-```bash
+npm install
 cp .env.example .env
+npm run start
 ```
 
-Отредактируй `.env`:
+Запуск через туннель:
+
+```bash
+npm run tunnel
+```
+
+Запуск web-версии:
+
+```bash
+npm run web
+```
+
+## Переменные Окружения
+
+`.env.example`:
 
 ```env
 EXPO_PUBLIC_API_URL=https://k8s.mectest.ru/test-app
 EXPO_PUBLIC_USER_UUID=550e8400-e29b-41d4-a716-446655440000
 ```
 
-> `EXPO_PUBLIC_USER_UUID` — любой валидный UUID v4, используется как токен авторизации.
+`EXPO_PUBLIC_API_URL` - базовый URL API.
 
-### 3. Установка зависимостей
+`EXPO_PUBLIC_USER_UUID` - идентификатор пользователя для тестового API.
+
+## Скрипты
 
 ```bash
-npm install
-```
-
-Установлены дополнительные библиотеки (`expo-secure-store`, `react-native-safe-area-context`, `expo-blur`, `eslint`, `prettier`).
-
-### 4. Проверка кода (Linter)
-
-Для проверки стиля кода запущен проект ESLint и Prettier:
-```bash
+npm run start
+npm run tunnel
+npm run web
+npm run android
+npm run ios
+npm run typecheck
 npm run lint
 npm run format
 ```
 
-### 5. Запуск
+## Архитектура
 
-```bash
-npx expo start
-```
+Проект организован вокруг экранов и небольших общих слоев:
 
-Открой в **Expo GO** на iOS или Android, отсканировав QR-код.
-
-## Переменные окружения
-
-| Переменная | Описание | Default |
-|---|---|---|
-| `EXPO_PUBLIC_API_URL` | Базовый URL API | `https://k8s.mectest.ru/test-app` |
-| `EXPO_PUBLIC_USER_UUID` | UUID пользователя для авторизации | `550e8400-e29b-41d4-a716-446655440000` |
-
-## Структура проекта
-
-```
+```text
 src/
-├── api/
-│   ├── client.ts        # Axios instance c UUID авторизацией
-│   └── posts.ts         # API функции
-├── stores/
-│   └── FeedStore.ts     # MobX store (tabBar, optimistic likes)
-├── hooks/
-│   └── useFeed.ts       # React Query infinite query + like mutation
-├── types/
-│   └── api.ts           # TypeScript типы
-├── tokens/
-│   └── design.ts        # Дизайн-токены (цвета, отступы, типографика)
-├── components/
-│   ├── PostCard.tsx      # Карточка поста
-│   ├── AuthorRow.tsx     # Аватар + имя автора
-│   ├── LikeButton.tsx    # Кнопка лайка с анимацией
-│   ├── LockedPost.tsx    # Заглушка платного поста
-│   ├── TabBar.tsx        # Фильтр по типу постов
-│   ├── SkeletonCard.tsx  # Скелетон загрузки
-│   ├── ErrorState.tsx    # Экран ошибки
-│   └── EmptyState.tsx    # Пустая лента
-└── screens/
-    └── FeedScreen.tsx    # Главный экран
+  api/              axios-клиент, API-методы и Zod-схемы
+  components/       переиспользуемые UI-компоненты
+  hooks/            React Query hooks и realtime hook
+  navigation/       типы навигации
+  query/            query keys и ручная синхронизация React Query cache
+  screens/
+    feed/           локальные компоненты и view-model ленты
+    post-detail/    локальные компоненты и view-model детального поста
+  shared/ui/        общие layout/UI primitives
+  stores/           MobX store для UI-состояния ленты
+  tokens/           дизайн-токены
+  types/            общие TypeScript-типы
+  utils/            небольшие helpers
 ```
+
+Главная идея: `FeedScreen` и `PostDetailScreen` остаются тонкими entry points, а композиция, layout и view-model логика вынесены в папки конкретных экранов.
+
+## Технические Детали
+
+- `EXPO_PUBLIC_USER_UUID` используется как тестовый идентификатор пользователя для API.
+- Лайки комментариев обрабатываются на клиенте.
+- Realtime-соединение использует WebSocket endpoint тестового API.

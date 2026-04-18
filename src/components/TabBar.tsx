@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { observer } from 'mobx-react-lite';
-import { colors, spacing, borderRadius, typography } from '../tokens/design';
-import type { Tier } from '../types/api';
+import React from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { observer } from "mobx-react-lite";
+import { colors, typography } from "../tokens/design";
+import type { Tier } from "../types/api";
 
 interface TabBarProps {
   activeTier: Tier;
@@ -10,9 +10,9 @@ interface TabBarProps {
 }
 
 const TABS: { key: Tier; label: string }[] = [
-  { key: 'all', label: 'Все' },
-  { key: 'free', label: 'Бесплатные' },
-  { key: 'paid', label: 'Платные' },
+  { key: "all", label: "Все" },
+  { key: "free", label: "Бесплатные" },
+  { key: "paid", label: "Платные" },
 ];
 
 export const TabBar = observer(({ activeTier, onSelect }: TabBarProps) => {
@@ -39,30 +39,37 @@ export const TabBar = observer(({ activeTier, onSelect }: TabBarProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    flexDirection: "row",
     backgroundColor: colors.surface,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    gap: spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    width: "100%",
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "#E2E5EA",
+    borderRadius: 999,
+    overflow: "hidden",
+    height: 38,
   },
   tab: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    borderRadius: borderRadius.full,
-    backgroundColor: colors.background,
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderRadius: 22,
   },
   tabActive: {
     backgroundColor: colors.primary,
   },
   label: {
-    fontSize: typography.sm,
+    fontSize: 13,
+    lineHeight: 18,
     fontWeight: typography.medium,
-    color: colors.textSecondary,
+    fontFamily: typography.family.medium,
+    color: "#57626F",
   },
   labelActive: {
     color: colors.textOnPrimary,
     fontWeight: typography.semiBold,
+    fontFamily: typography.family.semiBold,
   },
 });

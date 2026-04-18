@@ -1,13 +1,14 @@
-import React, { useRef } from 'react';
-import {
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  Animated,
-  View,
-} from 'react-native';
-import { observer } from 'mobx-react-lite';
-import { colors, spacing, typography } from '../tokens/design';
+import React from "react";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
+import { observer } from "mobx-react-lite";
+import { HeartBlankIcon, HeartFilledIcon } from "./icons";
+import { ActionCounterButton } from "../shared/ui";
+import { colors, typography } from "../tokens/design";
 
 interface LikeButtonProps {
   isLiked: boolean;
@@ -15,59 +16,43 @@ interface LikeButtonProps {
   onPress: () => void;
 }
 
-export const LikeButton = observer(({ isLiked, likesCount, onPress }: LikeButtonProps) => {
-  const scale = useRef(new Animated.Value(1)).current;
+export const LikeButton = observer(
+  ({ isLiked, likesCount, onPress }: LikeButtonProps) => {
+    const scale = useSharedValue(1);
 
-  const handlePress = () => {
-    Animated.sequence([
-      Animated.timing(scale, { toValue: 1.35, duration: 100, useNativeDriver: true }),
-      Animated.timing(scale, { toValue: 1, duration: 100, useNativeDriver: true }),
-    ]).start();
-    onPress();
-  };
+    const animatedStyle = useAnimatedStyle(() => ({
+      transform: [{ scale: scale.value }],
+    }));
 
-  return (
-    <TouchableOpacity
-      onPress={handlePress}
-      activeOpacity={0.7}
-      style={styles.container}
-      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-      accessibilityRole="button"
-      accessibilityLabel={isLiked ? `Убрать лайк. Текущее количество: ${likesCount}` : `Лайкнуть. Текущее количество: ${likesCount}`}
-      accessibilityState={{ selected: isLiked }}
-    >
-      <Animated.Text
-        style={[styles.heart, isLiked && styles.heartLiked, { transform: [{ scale }] }]}
-      >
-        {isLiked ? '♥' : '♡'}
-      </Animated.Text>
-      <Text style={[styles.count, isLiked && styles.countLiked]}>
-        {likesCount}
-      </Text>
-    </TouchableOpacity>
-  );
-});
+    const handlePress = () => {
+      scale.value = withSequence(
+        withTiming(1.15, { duration: 100 }),
+        withTiming(1, { duration: 100 }),
+      );
+      onPress();
+    };
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
+    return (
+      <ActionCounterButton
+        count={likesCount}
+        selected={isLiked}
+        onPress={handlePress}
+        accessibilityLabel={
+          isLiked
+            ? `Убрать лайк. Текущее количество: ${likesCount}`
+            : `Лайкнуть. Текущее количество: ${likesCount}`
+        }
+        countStyle={{ fontFamily: typography.family.medium }}
+        icon={
+          <Animated.View style={animatedStyle}>
+            {isLiked ? (
+              <HeartFilledIcon size={16} color={colors.textOnPrimary} />
+            ) : (
+              <HeartBlankIcon size={16} color={colors.textSecondary} />
+            )}
+          </Animated.View>
+        }
+      />
+    );
   },
-  heart: {
-    fontSize: typography.lg,
-    color: colors.textSecondary,
-  },
-  heartLiked: {
-    color: colors.liked,
-  },
-  count: {
-    fontSize: typography.sm,
-    color: colors.textSecondary,
-    fontWeight: typography.medium,
-    minWidth: 16,
-  },
-  countLiked: {
-    color: colors.liked,
-  },
-});
+);

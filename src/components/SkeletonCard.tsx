@@ -1,46 +1,51 @@
-import React, { useRef, useEffect } from 'react';
-import { View, StyleSheet, Animated } from 'react-native';
-import { colors, spacing, borderRadius } from '../tokens/design';
+import React, { useEffect } from "react";
+import { View, StyleSheet } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
+import { colors, spacing, borderRadius } from "../tokens/design";
+import type { StyleProp, ViewStyle } from "react-native";
 
-function SkeletonBox({ style }: { style?: object }) {
-  const opacity = useRef(new Animated.Value(0.4)).current;
+function SkeletonBox({ style }: { style?: StyleProp<ViewStyle> }) {
+  const opacity = useSharedValue(0.4);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
 
   useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(opacity, { toValue: 1, duration: 700, useNativeDriver: true }),
-        Animated.timing(opacity, { toValue: 0.4, duration: 700, useNativeDriver: true }),
-      ])
-    ).start();
+    opacity.value = withRepeat(
+      withSequence(
+        withTiming(1, { duration: 700 }),
+        withTiming(0.4, { duration: 700 }),
+      ),
+      -1,
+    );
   }, [opacity]);
 
-  return (
-    <Animated.View
-      style={[styles.skeleton, style, { opacity }]}
-    />
-  );
+  return <Animated.View style={[styles.skeleton, style, animatedStyle]} />;
 }
 
 export function SkeletonCard() {
   return (
     <View style={styles.card}>
-      {/* Author row */}
       <View style={styles.authorRow}>
         <SkeletonBox style={styles.avatar} />
         <SkeletonBox style={styles.authorName} />
       </View>
 
-      {/* Cover image */}
       <SkeletonBox style={styles.cover} />
 
-      {/* Text */}
       <View style={styles.textBlock}>
         <SkeletonBox style={styles.titleLine} />
         <SkeletonBox style={styles.bodyLine} />
         <SkeletonBox style={styles.bodyLineShort} />
       </View>
 
-      {/* Actions */}
       <View style={styles.actionsRow}>
         <SkeletonBox style={styles.actionItem} />
         <SkeletonBox style={styles.actionItem} />
@@ -51,16 +56,18 @@ export function SkeletonCard() {
 
 const styles = StyleSheet.create({
   skeleton: {
-    backgroundColor: colors.border,
+    backgroundColor: colors.surfaceMuted,
     borderRadius: borderRadius.sm,
   },
   card: {
     backgroundColor: colors.surface,
-    marginBottom: spacing.sm,
+    borderRadius: 12,
+    marginBottom: 16,
+    overflow: "hidden",
   },
   authorRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing.sm,
     padding: spacing.lg,
   },
@@ -74,8 +81,8 @@ const styles = StyleSheet.create({
     height: 14,
   },
   cover: {
-    width: '100%',
-    height: 200,
+    width: "100%",
+    aspectRatio: 295 / 264,
     borderRadius: 0,
   },
   textBlock: {
@@ -83,19 +90,19 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   titleLine: {
-    width: '70%',
+    width: "70%",
     height: 18,
   },
   bodyLine: {
-    width: '100%',
+    width: "100%",
     height: 13,
   },
   bodyLineShort: {
-    width: '55%',
+    width: "55%",
     height: 13,
   },
   actionsRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: spacing.lg,
     paddingHorizontal: spacing.lg,
     paddingBottom: spacing.lg,

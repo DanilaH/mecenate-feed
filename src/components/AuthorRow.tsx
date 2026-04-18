@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Image } from 'expo-image';
-import { colors, spacing, typography } from '../tokens/design';
-import type { Author } from '../types/api';
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { Image } from "expo-image";
+import { colors, spacing, typography } from "../tokens/design";
+import type { Author } from "../types/api";
 
 interface AuthorRowProps {
   author: Author;
@@ -10,9 +10,9 @@ interface AuthorRowProps {
 
 export function AuthorRow({ author }: AuthorRowProps) {
   const initials = author.displayName
-    .split(' ')
+    .split(" ")
     .map((w) => w[0])
-    .join('')
+    .join("")
     .toUpperCase()
     .slice(0, 2);
 
@@ -36,9 +36,7 @@ export function AuthorRow({ author }: AuthorRowProps) {
         <Text style={styles.name} numberOfLines={1}>
           {author.displayName}
         </Text>
-        {author.isVerified && (
-          <Text style={styles.verified}>✓</Text>
-        )}
+        {author.isVerified && <Text style={styles.verified}>✓</Text>}
       </View>
     </View>
   );
@@ -46,27 +44,27 @@ export function AuthorRow({ author }: AuthorRowProps) {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingHorizontal: 30,
+    paddingVertical: 14,
   },
   avatarWrapper: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    overflow: 'hidden',
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    overflow: "hidden",
   },
   avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
   },
   avatarFallback: {
     backgroundColor: colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   initials: {
     color: colors.textOnPrimary,
@@ -74,14 +72,16 @@ const styles = StyleSheet.create({
     fontWeight: typography.bold,
   },
   info: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing.xs,
     flex: 1,
   },
   name: {
-    fontSize: typography.md,
-    fontWeight: typography.semiBold,
+    fontSize: 12,
+    lineHeight: 20,
+    fontWeight: typography.bold,
+    fontFamily: typography.family.bold,
     color: colors.text,
   },
   verified: {

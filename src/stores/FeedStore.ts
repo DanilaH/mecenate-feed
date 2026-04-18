@@ -1,5 +1,5 @@
-import { makeAutoObservable } from 'mobx';
-import type { Tier } from '../types/api';
+import { makeAutoObservable } from "mobx";
+import type { Tier } from "../types/api";
 
 interface OptimisticLike {
   isLiked: boolean;
@@ -7,7 +7,7 @@ interface OptimisticLike {
 }
 
 class FeedStore {
-  activeTier: Tier = 'all';
+  activeTier: Tier = "all";
   optimisticLikes: Map<string, OptimisticLike> = new Map();
 
   constructor() {
@@ -16,11 +16,14 @@ class FeedStore {
 
   setTier(tier: Tier) {
     this.activeTier = tier;
-    // Clear optimistic state on tab switch
     this.optimisticLikes.clear();
   }
 
-  applyOptimisticLike(postId: string, currentIsLiked: boolean, currentCount: number) {
+  applyOptimisticLike(
+    postId: string,
+    currentIsLiked: boolean,
+    currentCount: number,
+  ) {
     const newIsLiked = !currentIsLiked;
     const newCount = newIsLiked ? currentCount + 1 : currentCount - 1;
     this.optimisticLikes.set(postId, {

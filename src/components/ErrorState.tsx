@@ -1,20 +1,24 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { colors, spacing, typography, borderRadius, shadow } from '../tokens/design';
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { Image } from "expo-image";
+import { PrimaryButton } from "./PrimaryButton";
+import { colors, typography } from "../tokens/design";
 
 interface ErrorStateProps {
   onRetry: () => void;
+  loading?: boolean;
 }
 
-export function ErrorState({ onRetry }: ErrorStateProps) {
+export function ErrorState({ onRetry, loading = false }: ErrorStateProps) {
   return (
     <View style={styles.container}>
-      <Text style={styles.emoji}>🐙</Text>
+      <Image
+        source={require("../../assets/sad-axolotl.svg")}
+        style={styles.image}
+        contentFit="contain"
+      />
       <Text style={styles.title}>Не удалось загрузить публикации</Text>
-      <Text style={styles.subtitle}>Проверьте подключение к интернету</Text>
-      <TouchableOpacity style={styles.button} onPress={onRetry} activeOpacity={0.85}>
-        <Text style={styles.buttonText}>Повторить</Text>
-      </TouchableOpacity>
+      <PrimaryButton title="Повторить" onPress={onRetry} loading={loading} />
     </View>
   );
 }
@@ -22,39 +26,23 @@ export function ErrorState({ onRetry }: ErrorStateProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: spacing.xxxl,
-    paddingVertical: spacing.xxxl * 2,
-    gap: spacing.md,
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingHorizontal: 18,
+    paddingTop: 54,
+    gap: 16,
   },
-  emoji: {
-    fontSize: 72,
-    marginBottom: spacing.md,
+  image: {
+    width: 126,
+    height: 126,
+    marginBottom: 0,
   },
   title: {
-    fontSize: typography.lg,
-    fontWeight: typography.semiBold,
+    fontSize: 18,
+    fontWeight: typography.bold,
+    fontFamily: typography.family.bold,
     color: colors.text,
-    textAlign: 'center',
-    lineHeight: 24,
-  },
-  subtitle: {
-    fontSize: typography.sm,
-    color: colors.textSecondary,
-    textAlign: 'center',
-  },
-  button: {
-    marginTop: spacing.lg,
-    backgroundColor: colors.primary,
-    paddingHorizontal: spacing.xxxl * 1.5,
-    paddingVertical: spacing.md,
-    borderRadius: borderRadius.full,
-    ...shadow.button,
-  },
-  buttonText: {
-    color: colors.textOnPrimary,
-    fontSize: typography.md,
-    fontWeight: typography.semiBold,
+    textAlign: "center",
+    lineHeight: 26,
   },
 });

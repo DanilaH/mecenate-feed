@@ -1,80 +1,74 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { BlurView } from 'expo-blur';
-import { colors, spacing, borderRadius, typography, shadow } from '../tokens/design';
+import React from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { BlurView } from "expo-blur";
+import { Image } from "expo-image";
+import { colors, typography } from "../tokens/design";
 
 interface LockedPostProps {
-  onSubscribe?: () => void;
+  onDonate?: () => void;
 }
 
-export function LockedPost({ onSubscribe }: LockedPostProps) {
+export function LockedPost({ onDonate }: LockedPostProps) {
   return (
-    <View style={styles.container}>
-      <BlurView intensity={20} style={styles.blurOverlay} tint="light">
-        <Text style={styles.previewText} numberOfLines={3}>
-          Этот пост доступен только подписчикам. Поддержите автора, чтобы читать эксклюзивный контент...
+    <BlurView intensity={64} tint="dark" style={StyleSheet.absoluteFill}>
+      <View style={styles.overlay}>
+        <Image
+          source={require("../../assets/money.svg")}
+          style={styles.moneyIcon}
+          contentFit="contain"
+        />
+        <Text style={styles.message}>
+          Контент скрыт пользователем.{"\n"}Доступ откроется после доната
         </Text>
-      </BlurView>
-      <View style={styles.lockBadge}>
-        <Text style={styles.lockIcon}>🔒</Text>
-        <Text style={styles.lockText}>Только для подписчиков</Text>
         <TouchableOpacity
-          style={styles.subscribeButton}
-          onPress={onSubscribe}
+          style={styles.donateButton}
+          onPress={onDonate}
           activeOpacity={0.85}
+          accessibilityRole="button"
         >
-          <Text style={styles.subscribeText}>Подписаться</Text>
+          <Text style={styles.donateText}>Отправить донат</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </BlurView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginHorizontal: spacing.lg,
-    marginBottom: spacing.md,
-    borderRadius: borderRadius.md,
-    overflow: 'hidden',
-    backgroundColor: colors.primaryLight,
-    borderWidth: 1,
-    borderColor: colors.primary + '30',
+  overlay: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 32,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
-  blurOverlay: {
-    padding: spacing.lg,
-    opacity: 0.4,
+  moneyIcon: {
+    width: 42,
+    height: 42,
+    marginBottom: 16,
   },
-  previewText: {
-    fontSize: typography.md,
-    lineHeight: 22,
-    color: colors.text,
-  },
-  lockBadge: {
-    alignItems: 'center',
-    paddingBottom: spacing.xl,
-    paddingHorizontal: spacing.xl,
-    gap: spacing.sm,
-  },
-  lockIcon: {
-    fontSize: 28,
-  },
-  lockText: {
-    fontSize: typography.sm,
-    color: colors.primary,
-    fontWeight: typography.semiBold,
-    textAlign: 'center',
-  },
-  subscribeButton: {
-    marginTop: spacing.sm,
-    backgroundColor: colors.primary,
-    paddingHorizontal: spacing.xxxl,
-    paddingVertical: spacing.md,
-    borderRadius: borderRadius.full,
-    ...shadow.button,
-  },
-  subscribeText: {
+  message: {
     color: colors.textOnPrimary,
-    fontSize: typography.md,
+    fontSize: 15,
+    lineHeight: 20,
     fontWeight: typography.semiBold,
+    fontFamily: typography.family.semiBold,
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  donateButton: {
+    width: 239,
+    height: 42,
+    borderRadius: 14,
+    backgroundColor: colors.primary,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 32,
+  },
+  donateText: {
+    color: colors.textOnPrimary,
+    fontSize: 15,
+    lineHeight: 20,
+    fontWeight: typography.semiBold,
+    fontFamily: typography.family.semiBold,
   },
 });
