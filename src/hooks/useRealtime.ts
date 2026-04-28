@@ -2,11 +2,12 @@ import { useEffect } from "react";
 import NetInfo, { type NetInfoState } from "@react-native-community/netinfo";
 import { useQueryClient } from "@tanstack/react-query";
 import { AppState, type AppStateStatus } from "react-native";
-import { API_URL, getAuthToken } from "../api/client";
+import { getAuthToken } from "../api/client";
 import {
   addCommentToCache,
   updatePostLikeFromRealtime,
 } from "../query/postCache";
+import { getWebSocketAuthStrategy, getWebSocketConfig } from "./realtimeAuth";
 import type { Comment } from "../types/api";
 
 type RealtimeEvent =
@@ -15,14 +16,6 @@ type RealtimeEvent =
   | { type: "comment_added"; postId: string; comment: Comment };
 
 const MAX_RECONNECT_DELAY = 15000;
-
-function getWebSocketUrl(token: string) {
-  const url = new URL(API_URL);
-  url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
-  url.pathname = `${url.pathname.replace(/\/$/, "")}/ws`;
-  url.searchParams.set("token", token);
-  return url.toString();
-}
 
 function canUseNetwork(state: NetInfoState) {
   return state.isConnected !== false && state.isInternetReachable !== false;
@@ -40,6 +33,8 @@ export function useRealtime(postId: string) {
     let hasNetworkState = false;
     let isConnecting = false;
     let isOnline = false;
+    const authStrategy = getWebSocketAuthStrategy();
+    let authTransport = authStrategy.initialTransport;
 
     const canConnect = () =>
       !closedByEffect && appState === "active" && hasNetworkState && isOnline;
@@ -75,7 +70,7 @@ export function useRealtime(postId: string) {
       }, delay);
     };
 
-    const connect = async () => {
+    const connect = async (transport = authTransport) => {
       if (!canConnect() || socket || isConnecting) return;
 
       isConnecting = true;
@@ -84,11 +79,17 @@ export function useRealtime(postId: string) {
         const token = await getAuthToken();
         if (!canConnect()) return;
 
-        const nextSocket = new WebSocket(getWebSocketUrl(token));
+        const socketConfig = getWebSocketConfig(token, transport);
+        const nextSocket = socketConfig.protocols
+          ? new WebSocket(socketConfig.url, socketConfig.protocols)
+          : new WebSocket(socketConfig.url);
+        let opened = false;
         socket = nextSocket;
 
         nextSocket.onopen = () => {
           if (socket !== nextSocket) return;
+          opened = true;
+          authTransport = transport;
           reconnectAttempt = 0;
         };
 
@@ -115,6 +116,17 @@ export function useRealtime(postId: string) {
           if (socket === nextSocket) {
             socket = null;
           }
+
+          if (
+            authStrategy.shouldFallbackToQuery({ opened, transport }) &&
+            authTransport === "protocol" &&
+            canConnect()
+          ) {
+            authTransport = "query";
+            connect("query");
+            return;
+          }
+
           scheduleReconnect();
         };
 
@@ -122,6 +134,15 @@ export function useRealtime(postId: string) {
           nextSocket.close();
         };
       } catch {
+        if (
+          authStrategy.shouldFallbackToQuery({ opened: false, transport }) &&
+          authTransport === "protocol"
+        ) {
+          authTransport = "query";
+          setTimeout(() => connect("query"), 0);
+          return;
+        }
+
         scheduleReconnect();
       } finally {
         isConnecting = false;
