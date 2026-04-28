@@ -64,11 +64,41 @@ npm run web
 ```env
 EXPO_PUBLIC_API_URL=https://k8s.mectest.ru/test-app
 EXPO_PUBLIC_USER_UUID=550e8400-e29b-41d4-a716-446655440000
+EXPO_PUBLIC_WS_AUTH_TRANSPORT=auto
 ```
 
 `EXPO_PUBLIC_API_URL` - базовый URL API.
 
 `EXPO_PUBLIC_USER_UUID` - идентификатор пользователя для тестового API.
+
+`EXPO_PUBLIC_WS_AUTH_TRANSPORT` - способ передачи токена в WebSocket:
+`auto`, `protocol` или `query`. По умолчанию `auto` сначала использует
+`Sec-WebSocket-Protocol`, а если backend не поддерживает такой handshake,
+откатывается на query-параметр для совместимости с тестовым API.
+
+## Проверка в Expo Go
+
+Чистая проверка установки и запуска:
+
+```bash
+rm -rf node_modules
+npm ci
+cp .env.example .env
+npx expo-doctor
+npx expo install --check
+npx expo start --clear
+```
+
+Для Windows PowerShell:
+
+```powershell
+if (Test-Path node_modules) { Remove-Item -Recurse -Force node_modules }
+npm ci
+Copy-Item .env.example .env -Force
+npx expo-doctor
+npx expo install --check
+npx expo start --clear
+```
 
 ## Скрипты
 
